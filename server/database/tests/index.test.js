@@ -1,7 +1,7 @@
 import SequelizeMock from 'sequelize-mock';
 import { resetAndMockDB } from '@utils/testUtils';
 import { DB_ENV } from '@utils/testUtils/mockData';
-import * as pg from 'pg';
+
 const mocks = {};
 describe('getClient', () => {
   afterAll(() => {
@@ -17,13 +17,12 @@ describe('getClient', () => {
     await expect(client).toBeInstanceOf(mocks.sequelize);
 
     expect(mocks.sequelize.mock.calls.length).toEqual(1);
-    expect(mocks.sequelize.mock.calls[0][0]).toEqual(DB_ENV.POSTGRES_DB);
-    expect(mocks.sequelize.mock.calls[0][1]).toEqual(DB_ENV.POSTGRES_USER);
-    expect(mocks.sequelize.mock.calls[0][2]).toEqual(DB_ENV.POSTGRES_PASSWORD);
+    expect(mocks.sequelize.mock.calls[0][0]).toEqual(DB_ENV.MYSQL_DB);
+    expect(mocks.sequelize.mock.calls[0][1]).toEqual(DB_ENV.MYSQL_USER);
+    expect(mocks.sequelize.mock.calls[0][2]).toEqual(DB_ENV.MYSQL_PASSWORD);
     expect(mocks.sequelize.mock.calls[0][3]).toEqual({
-      dialectModule: pg,
-      dialect: 'postgres',
-      host: DB_ENV.POSTGRES_HOST,
+      dialect: 'mysql',
+      host: DB_ENV.MYSQL_HOST,
       logging: false,
       pool: {
         min: 0,
@@ -74,7 +73,7 @@ describe('connect', () => {
     expect(console.log.mock.calls[0][1]).toEqual({
       db: process.env.POSTGRES_DB,
       user: process.env.POSTGRES_USER,
-      host: process.env.POSTGRES_HOST
+      host: process.env.MYSQL_HOST
     });
   });
 

@@ -2,7 +2,7 @@ module.exports = {
   url: process.env.DB_URI,
   logging: true,
   options: {
-    dialect: 'postgres',
+    dialect: 'mysql',
     pool: {
       min: 0,
       max: 10,
