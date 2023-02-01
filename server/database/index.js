@@ -1,5 +1,7 @@
 import Sequelize from 'sequelize';
 import { getLogger, isTestEnv, logger } from '@server/utils';
+import dotenv from 'dotenv';
+import mysql2 from 'mysql2';
 
 let client;
 let namespace;
@@ -13,11 +15,13 @@ export const getClient = force => {
       if (!isTestEnv()) {
         Sequelize.useCLS(namespace);
       }
-      client = new Sequelize(process.env.MYSQL_DB, process.env.MYSQL_USER, process.env.MYSQL_PASSWORD, {
+      dotenv.config({ path: `.env.${process.env.ENVIRONMENT_NAME}` });
+      client = new Sequelize(process.env.DB_URI, {
         host: process.env.MYSQL_HOST,
         port: process.env.MYSQL_PORT,
         logging: isTestEnv() ? false : getLogger(),
         dialect: 'mysql',
+        dialectModule: mysql2,
         pool: {
           min: 0,
           max: 10,

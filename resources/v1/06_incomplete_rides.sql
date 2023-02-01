@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS incomplete_rides (
   trip_id INT NOT NULL,
   created_at TIMESTAMP,
   updated_at TIMESTAMP,
+  deleted_at TIMESTAMP,
   PRIMARY KEY (id),
   INDEX trip_id_idx (trip_id ASC) VISIBLE,
   CONSTRAINT trip_id_inc

@@ -8,15 +8,10 @@ dotenv.config({ path: `.env.${process.env.ENVIRONMENT_NAME}` });
 
 const sequelize = getClient();
 
-db.products = require('@database/models/products').model(sequelize, Sequelize.DataTypes);
-db.stores = require('@database/models/stores').model(sequelize, Sequelize.DataTypes);
-db.addresses = require('@database/models/addresses').model(sequelize, Sequelize.DataTypes);
-db.suppliers = require('@database/models/suppliers').model(sequelize, Sequelize.DataTypes);
-db.users = require('@database/models/users').model(sequelize, Sequelize.DataTypes);
-
-db.purchasedProducts = require('@database/models/purchased_products').model(sequelize, Sequelize.DataTypes);
-db.storeProducts = require('@database/models/store_products').model(sequelize, Sequelize.DataTypes);
-db.supplierProducts = require('@database/models/supplier_products').model(sequelize, Sequelize.DataTypes);
+db.userModel = require('@database/models/user').model(sequelize, Sequelize.DataTypes);
+db.driverModel = require('@database/models/driver').model(sequelize, Sequelize.DataTypes);
+db.customerModel = require('@database/models/customer').model(sequelize, Sequelize.DataTypes);
+db.vehicleModel = require('@database/models/vehicle').model(sequelize, Sequelize.DataTypes);
 
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {

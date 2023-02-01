@@ -11,7 +11,8 @@ const { nodeInterface } = getNode();
 
 export const userFields = {
   firstName: { type: new GraphQLNonNull(GraphQLString) },
-  lastName: { type: new GraphQLNonNull(GraphQLString) }
+  lastName: { type: new GraphQLNonNull(GraphQLString) },
+  typeOfUser: { type: new GraphQLNonNull(GraphQLString) }
 };
 
 const GraphQLUser = new GraphQLObjectType({
@@ -21,13 +22,14 @@ const GraphQLUser = new GraphQLObjectType({
     ...getQueryFields(userFields, TYPE_ATTRIBUTES.isNonNull),
     id: { type: new GraphQLNonNull(GraphQLID) },
     email: { type: new GraphQLNonNull(GraphQLString) },
+    dateOfBirth: { type: new GraphQLNonNull(GraphQLString) },
     ...timestamps
   })
 });
 
 const UserConnection = createConnection({
-  name: 'users',
-  target: db.users,
+  name: 'user',
+  target: db.userModel,
   nodeType: GraphQLUser,
   before: (findOptions, args, context) => {
     findOptions.include = findOptions.include || [];
@@ -49,7 +51,7 @@ export const userQueries = {
   query: {
     type: GraphQLUser
   },
-  model: db.users
+  model: db.userModel
 };
 
 // lists on the users table.
@@ -60,11 +62,11 @@ export const userLists = {
     type: UserConnection.connectionType,
     args: UserConnection.connectionArgs
   },
-  model: db.users
+  model: db.userModel
 };
 
 export const userMutations = {
   args: userFields,
   type: GraphQLUser,
-  model: db.users
+  model: db.userModel
 };
