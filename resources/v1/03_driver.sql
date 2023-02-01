@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS driver (
   user_id INT NOT NULL,
   created_at TIMESTAMP,
   updated_at TIMESTAMP,
+  deleted_at TIMESTAMP,
   PRIMARY KEY (id),
   INDEX user_id_idx (user_id ASC) VISIBLE,
   CONSTRAINT user_id_dri

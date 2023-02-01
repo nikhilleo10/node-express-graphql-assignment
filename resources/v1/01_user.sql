@@ -11,6 +11,7 @@ CREATE TABLE user (
   location POINT NULL,
   created_at TIMESTAMP,
   updated_at TIMESTAMP,
+  deleted_at TIMESTAMP,
   PRIMARY KEY (id),
   UNIQUE INDEX email_UNIQUE (email ASC) VISIBLE,
   UNIQUE INDEX mobile_UNIQUE (mobile ASC) VISIBLE)

@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS vehicle (
   driver_id INT NOT NULL,
   created_at TIMESTAMP,
   updated_at TIMESTAMP,
+  deleted_at TIMESTAMP,
   PRIMARY KEY (id),
   INDEX driver_id_idx (driver_id ASC) VISIBLE,
   CONSTRAINT driver_id_veh

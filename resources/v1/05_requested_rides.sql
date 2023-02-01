@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS requested_rides (
   driver_id INT NULL,
   created_at TIMESTAMP,
   updated_at TIMESTAMP,
+  deleted_at TIMESTAMP,
   PRIMARY KEY (id),
   INDEX driver_id_idx (driver_id ASC) VISIBLE,
   INDEX cust_id_idx (cust_id ASC) VISIBLE,

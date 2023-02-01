@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS customer (
   type ENUM('REGULAR', 'PREMIUM') NOT NULL,
   created_at TIMESTAMP,
   updated_at TIMESTAMP,
+  deleted_at TIMESTAMP,
   user_id INT NOT NULL,
   PRIMARY KEY (id),
   INDEX user_id_idx (user_id ASC) VISIBLE,
