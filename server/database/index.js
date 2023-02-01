@@ -1,5 +1,4 @@
 import Sequelize from 'sequelize';
-import * as pg from 'pg';
 import { getLogger, isTestEnv, logger } from '@server/utils';
 
 let client;
@@ -14,12 +13,11 @@ export const getClient = force => {
       if (!isTestEnv()) {
         Sequelize.useCLS(namespace);
       }
-      client = new Sequelize(process.env.POSTGRES_DB, process.env.POSTGRES_USER, process.env.POSTGRES_PASSWORD, {
-        host: process.env.POSTGRES_HOST,
-        dialectModule: pg,
-        port: process.env.POSTGRES_PORT,
+      client = new Sequelize(process.env.MYSQL_DB, process.env.MYSQL_USER, process.env.MYSQL_PASSWORD, {
+        host: process.env.MYSQL_HOST,
+        port: process.env.MYSQL_PORT,
         logging: isTestEnv() ? false : getLogger(),
-        dialect: 'postgres',
+        dialect: 'mysql',
         pool: {
           min: 0,
           max: 10,
@@ -51,9 +49,9 @@ export const connect = async () => {
   try {
     await client.authenticate();
     console.log('Connection has been established successfully.\n', {
-      db: process.env.POSTGRES_DB,
-      user: process.env.POSTGRES_USER,
-      host: process.env.POSTGRES_HOST
+      db: process.env.MYSQL_DB,
+      user: process.env.MYSQL_USER,
+      host: process.env.MYSQL_HOST
     });
   } catch (error) {
     console.error('Unable to connect to the database:', error);
