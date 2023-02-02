@@ -1,7 +1,7 @@
 import { GraphQLObjectType, GraphQLNonNull, GraphQLInt } from 'graphql';
 import camelCase from 'lodash/camelCase';
 import pluralize from 'pluralize';
-import { defaultListArgs, defaultArgs, resolver } from 'graphql-sequelize';
+import { defaultListArgs, defaultArgs } from 'graphql-sequelize';
 import { Aggregate } from '@gql/models/aggregate';
 import { getNode } from '@gql/node';
 import { getGqlModels } from '@server/utils/autogenHelper';
@@ -16,7 +16,6 @@ export const addQueries = () => {
   Object.keys(DB_TABLES_QUERIES).forEach(table => {
     query[camelCase(table)] = {
       ...DB_TABLES_QUERIES[table].query,
-      resolve: resolver(DB_TABLES_QUERIES[table].model),
       args: {
         id: { type: new GraphQLNonNull(GraphQLInt) },
         ...DB_TABLES_QUERIES[table].args,

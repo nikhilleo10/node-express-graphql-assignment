@@ -1,6 +1,6 @@
-import { GraphQLID, GraphQLInt, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
+import { GraphQLFloat, GraphQLID, GraphQLInt, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
 import { getNode } from '@gql/node';
-import { createConnection } from 'graphql-sequelize';
+import { createConnection, resolver } from 'graphql-sequelize';
 import { timestamps } from '@gql/fields/timestamps';
 import db from '@database/models';
 import { totalConnectionFields } from '@utils/index';
@@ -12,17 +12,18 @@ const { nodeInterface } = getNode();
 export const userFields = {
   firstName: { type: new GraphQLNonNull(GraphQLString) },
   lastName: { type: new GraphQLNonNull(GraphQLString) },
-  typeOfUser: { type: new GraphQLNonNull(GraphQLString) }
+  typeOfUser: { type: new GraphQLNonNull(GraphQLString) },
+  distance_in_km: { type: GraphQLFloat },
+  email: { type: new GraphQLNonNull(GraphQLString) },
+  dateOfBirth: { type: new GraphQLNonNull(GraphQLString) }
 };
 
 const GraphQLUser = new GraphQLObjectType({
   name: 'user',
   interfaces: [nodeInterface],
   fields: () => ({
-    ...getQueryFields(userFields, TYPE_ATTRIBUTES.isNonNull),
     id: { type: new GraphQLNonNull(GraphQLID) },
-    email: { type: new GraphQLNonNull(GraphQLString) },
-    dateOfBirth: { type: new GraphQLNonNull(GraphQLString) },
+    ...getQueryFields(userFields, TYPE_ATTRIBUTES.isNonNull),
     ...timestamps
   })
 });
@@ -49,7 +50,8 @@ export const userQueries = {
     }
   },
   query: {
-    type: GraphQLUser
+    type: GraphQLUser,
+    resolve: resolver(db.userModel)
   },
   model: db.userModel
 };
