@@ -65,6 +65,7 @@ const VehicleConnection = createConnection({
     findOptions.raw = true;
     findOptions.nest = true;
     findOptions.where = sequelizedWhere(findOptions.where, args.where);
+    findOptions.order = _formatForOrderByClause(args.order);
     return findOptions;
   },
   after: (result, args, context) => {
@@ -121,3 +122,16 @@ export const vehicleMutations = {
   type: GraphQLVehicle,
   model: db.vehicleModel
 };
+
+function _formatForOrderByClause(args) {
+  const arr = args.split(',');
+  const orderByClause = [];
+  arr.forEach(element => {
+    const queryArgs = element.trim().split(' ');
+    const orderByCol = queryArgs[0];
+    const orderByType = queryArgs[1];
+    const query = 'queryColumn'.replace('queryColumn', orderByCol);
+    orderByClause.push([db.sequelize.literal(query), `${orderByType}`]);
+  });
+  return orderByClause;
+}
