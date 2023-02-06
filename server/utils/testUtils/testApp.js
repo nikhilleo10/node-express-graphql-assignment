@@ -26,7 +26,7 @@ const getTestApp = async () => {
     schema,
     formatError: e => {
       logger().info({ e });
-      return e.message;
+      return e;
     }
   });
   await server.start();

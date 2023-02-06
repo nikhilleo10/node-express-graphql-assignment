@@ -4,10 +4,10 @@ import { createConnection, resolver } from 'graphql-sequelize';
 import { timestamps } from '@gql/fields/timestamps';
 import db from '@database/models';
 import { totalConnectionFields } from '@utils/index';
-import { sequelizedWhere } from '@database/dbUtils';
 import { getQueryFields, TYPE_ATTRIBUTES } from '@server/utils/gqlFieldUtils';
 import { GraphQLDriver } from '../drivers';
 import { TYPE_OF_VEHICLE_ENUM_VALUES, TYPE_OF_ENGINE_ENUM_VALUES } from '@server/utils/constants';
+import { getFindOptions } from './getNearbyUsersUtils';
 
 const { nodeInterface } = getNode();
 
@@ -40,33 +40,8 @@ const VehicleConnection = createConnection({
   before: (findOptions, args, context) => {
     findOptions.include = findOptions.include || [];
     if (args.points) {
-      const cooridnates = args.points.split(' ');
-      const locationSql = db.sequelize.literal(`ST_GeomFromText('POINT(${cooridnates[0]} ${cooridnates[1]})')`);
-      findOptions.include.push({
-        model: db.driverModel,
-        as: 'driver',
-        include: [
-          {
-            model: db.userModel,
-            as: 'user',
-            attributes: [
-              'firstName',
-              'lastName',
-              'typeOfUser',
-              'email',
-              'dateOfBirth',
-              'id',
-              [db.sequelize.fn('ST_Distance_Sphere', db.sequelize.literal('location'), locationSql), 'distance_in_km']
-            ]
-          }
-        ]
-      });
+      return getFindOptions(db, findOptions, args, context);
     }
-    findOptions.raw = true;
-    findOptions.nest = true;
-    findOptions.where = sequelizedWhere(findOptions.where, args.where);
-    findOptions.order = _formatForOrderByClause(args.order);
-    return findOptions;
   },
   after: (result, args, context) => {
     const edges = result.edges.map(item => {
@@ -122,16 +97,3 @@ export const vehicleMutations = {
   type: GraphQLVehicle,
   model: db.vehicleModel
 };
-
-function _formatForOrderByClause(args) {
-  const arr = args.split(',');
-  const orderByClause = [];
-  arr.forEach(element => {
-    const queryArgs = element.trim().split(' ');
-    const orderByCol = queryArgs[0];
-    const orderByType = queryArgs[1];
-    const query = 'queryColumn'.replace('queryColumn', orderByCol);
-    orderByClause.push([db.sequelize.literal(query), `${orderByType}`]);
-  });
-  return orderByClause;
-}

@@ -1,14 +1,6 @@
 import isNil from 'lodash/isNil';
 import set from 'lodash/set';
-import {
-  addressesTable,
-  productsTable,
-  purchasedProductsTable,
-  storeProductsTable,
-  storesTable,
-  supplierProductsTable,
-  suppliersTable
-} from '@server/utils/testUtils/mockData';
+import { driverTable, requestedRidesTable, userTable, vehicleTable } from '@server/utils/testUtils/mockData';
 import sequelize from 'sequelize';
 import request from 'supertest';
 import logger from '@middleware/logger/index';
@@ -22,7 +14,9 @@ const defineAndAddAttributes = (connection, name, mock, attr, total = 10) => {
   });
   mockTable.rawAttributes = attr;
   mockTable.manyFromSource = { count: () => new Promise(resolve => resolve(total)) };
-  set(mockTable, 'sequelize.dialect', 'postgres');
+  set(mockTable, 'sequelize.dialect', { name: 'mysql2' });
+  set(mockTable, 'sequelize', connection);
+  set(mockTable, 'sequelize.literal', sequelize.literal);
   return mockTable;
 };
 
@@ -50,83 +44,50 @@ export function mockDBClient(config = { total: 10 }) {
   const SequelizeMock = require('sequelize-mock');
   // Setup the mock database connection
   const dbConnectionMock = new SequelizeMock();
-  dbConnectionMock.options = { dialect: 'mock' };
+  dbConnectionMock.dialect = { name: 'mysql2' };
+  dbConnectionMock.literal = sequelize.literal;
+  dbConnectionMock.fn = sequelize.fn;
 
-  const addressesMock = defineAndAddAttributes(
+  const vehicleMock = defineAndAddAttributes(
     dbConnectionMock,
-    'addresses',
-    addressesTable[0],
-    require('@database/models/addresses').getAttributes(sequelize, sequelize.DataTypes),
-    config.total
-  );
-  const productsMock = defineAndAddAttributes(
-    dbConnectionMock,
-    'products',
-    productsTable[0],
-    require('@database/models/products').getAttributes(sequelize, sequelize.DataTypes),
-    config.total
-  );
-  const usersMock = defineAndAddAttributes(
-    dbConnectionMock,
-    'users',
-    {},
-    require('@database/models/users').getAttributes(sequelize, sequelize.DataTypes),
+    'vehicle',
+    vehicleTable[0],
+    require('@database/models/vehicle').getAttributes(sequelize, sequelize.DataTypes),
     config.total
   );
 
-  const purchasedProductsMock = defineAndAddAttributes(
+  const userMock = defineAndAddAttributes(
     dbConnectionMock,
-    'purchased_products',
-    purchasedProductsTable[0],
-    require('@database/models/purchased_products').getAttributes(sequelize, sequelize.DataTypes),
+    'user',
+    userTable[0],
+    require('@database/models/user').getAttributes(sequelize, sequelize.DataTypes),
     config.total
   );
 
-  purchasedProductsMock.$queryInterface.$useHandler(function(query, queryOptions) {
-    if (query === 'findAll') {
-      return config?.purchasedProducts?.findAll;
-    }
-    return config?.purchasedProducts;
-  });
-  const storesMock = defineAndAddAttributes(
+  const driverMock = defineAndAddAttributes(
     dbConnectionMock,
-    'stores',
-    storesTable[0],
-    require('@database/models/stores').getAttributes(sequelize, sequelize.DataTypes),
+    'driver',
+    driverTable[0],
+    require('@database/models/driver').getAttributes(sequelize, sequelize.DataTypes),
     config.total
   );
-  const storeProductsMock = defineAndAddAttributes(
+
+  const requestedRideMock = defineAndAddAttributes(
     dbConnectionMock,
-    'store_products',
-    storeProductsTable[0],
-    require('@database/models/store_products').getAttributes(sequelize, sequelize.DataTypes),
+    'requested_rides',
+    requestedRidesTable[0],
+    require('@database/models/requestedRides').getAttributes(sequelize, sequelize.DataTypes),
     config.total
   );
-  const supplierProductsMock = defineAndAddAttributes(
-    dbConnectionMock,
-    'supplier_products',
-    supplierProductsTable[0],
-    require('@database/models/supplier_products').getAttributes(sequelize, sequelize.DataTypes),
-    config.total
-  );
-  const suppliersMock = defineAndAddAttributes(
-    dbConnectionMock,
-    'suppliers',
-    suppliersTable[0],
-    require('@database/models/purchased_products').getAttributes(sequelize, sequelize.DataTypes),
-    config.total
-  );
+
   return {
     client: dbConnectionMock,
     models: {
-      addresses: addressesMock,
-      products: productsMock,
-      purchasedProducts: purchasedProductsMock,
-      stores: storesMock,
-      storeProducts: storeProductsMock,
-      suppliers: suppliersMock,
-      supplierProducts: supplierProductsMock,
-      users: usersMock
+      vehicleModel: vehicleMock,
+      userModel: userMock,
+      driverModel: driverMock,
+      requestedRideModel: requestedRideMock,
+      sequelize: dbConnectionMock
     }
   };
 }
