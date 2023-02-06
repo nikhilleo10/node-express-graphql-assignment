@@ -8,17 +8,18 @@ import { getQueryFields, TYPE_ATTRIBUTES } from '@server/utils/gqlFieldUtils';
 import { GraphQLDate, GraphQLDateTime } from 'graphql-iso-date';
 import moment from 'moment';
 import _ from 'lodash';
-import { sequelizedWhere } from '@server/database/dbUtils';
+import { acceptRide, sequelizedWhere } from '@server/database/dbUtils';
+import { updateRideOptions } from '@server/utils/constants';
 
 const { nodeInterface } = getNode();
 
 export const requestedRidesFields = {
-  pickupLoc: { type: new GraphQLNonNull(GraphQLString) },
-  dropLoc: { type: new GraphQLNonNull(GraphQLString) },
+  pickupLoc: { type: GraphQLString },
+  dropLoc: { type: GraphQLString },
   dateOfRide: { type: GraphQLDate },
   bookingTime: { type: GraphQLDateTime },
   estFare: { type: GraphQLFloat },
-  estDistance: { type: new GraphQLNonNull(GraphQLFloat) },
+  estDistance: { type: GraphQLFloat },
   tripStatus: { type: GraphQLString },
   custId: { type: GraphQLInt },
   driverId: { type: GraphQLInt }
@@ -76,7 +77,11 @@ export const requestedRideLists = {
 };
 
 export const requestedRideMutations = {
-  args: requestedRidesFields,
+  args: {
+    ...requestedRidesFields,
+    updateType: { type: GraphQLString },
+    id: { type: new GraphQLNonNull(GraphQLID) }
+  },
   type: GraphQLRequestedRides,
   model: db.requestedRideModel,
   customCreateResolver: async (model, args, ctx, info) => {
@@ -85,9 +90,18 @@ export const requestedRideMutations = {
       dateOfRide: moment(moment.now()).format('YYYY-MM-DD'),
       bookingTime: moment(moment.now()).format('YYYY-MM-DD HH:mm:ss'),
       estFare: (args.estDistance * _.random(10, 100)).toFixed(2),
-      // tripStatus: TRIP_STATUS_TYPES.PENDING,
       createdAt: moment(moment.now()).format('YYYY-MM-DD HH:mm:ss')
     };
     return await model.create(args);
+  },
+  customUpdateResolver: async (model, args, ctx, info) => {
+    switch (args.updateType) {
+      case updateRideOptions.ACCEPT_A_RIDE:
+        delete args.updateType;
+        return await acceptRide(model, args);
+
+      default:
+        break;
+    }
   }
 };

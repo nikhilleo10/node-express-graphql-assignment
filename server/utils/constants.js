@@ -55,3 +55,7 @@ export const TYPE_OF_ENGINE_ENUM_VALUES = new GraphQLEnumType({
     }
   }
 });
+
+export const updateRideOptions = {
+  ACCEPT_A_RIDE: 'ACCEPT_A_RIDE'
+};
