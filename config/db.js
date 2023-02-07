@@ -1,8 +1,10 @@
+require('dotenv').config();
+
 module.exports = {
   url: process.env.DB_URI,
   logging: true,
+  dialect: 'mysql',
   options: {
-    dialect: 'mysql',
     pool: {
       min: 0,
       max: 10,

@@ -1,6 +1,13 @@
 import isNil from 'lodash/isNil';
 import set from 'lodash/set';
-import { driverTable, requestedRidesTable, userTable, vehicleTable } from '@server/utils/testUtils/mockData';
+import {
+  completedRideTable,
+  driverTable,
+  incompleteRideTable,
+  requestedRidesTable,
+  userTable,
+  vehicleTable
+} from '@server/utils/testUtils/mockData';
 import sequelize from 'sequelize';
 import request from 'supertest';
 import logger from '@middleware/logger/index';
@@ -9,7 +16,9 @@ const defineAndAddAttributes = (connection, name, mock, attr, total = 10) => {
   const mockTable = connection.define(name, mock, {
     instanceMethods: {
       findAll: () => [mock],
-      findOne: () => mock
+      findOne: () => mock,
+      create: () => mock,
+      update: () => mock
     }
   });
   mockTable.rawAttributes = attr;
@@ -80,6 +89,22 @@ export function mockDBClient(config = { total: 10 }) {
     config.total
   );
 
+  const completedRideMock = defineAndAddAttributes(
+    dbConnectionMock,
+    'completed_rides',
+    completedRideTable,
+    require('@database/models/completedRides').getAttributes(sequelize, sequelize.DataTypes),
+    config.total
+  );
+
+  const incompleteRideMock = defineAndAddAttributes(
+    dbConnectionMock,
+    'incomplete_rides',
+    incompleteRideTable,
+    require('@database/models/incompleteRides').getAttributes(sequelize, sequelize.DataTypes),
+    config.total
+  );
+
   return {
     client: dbConnectionMock,
     models: {
@@ -87,6 +112,8 @@ export function mockDBClient(config = { total: 10 }) {
       userModel: userMock,
       driverModel: driverMock,
       requestedRideModel: requestedRideMock,
+      completedRideModel: completedRideMock,
+      incompleteRideModel: incompleteRideMock,
       sequelize: dbConnectionMock
     }
   };

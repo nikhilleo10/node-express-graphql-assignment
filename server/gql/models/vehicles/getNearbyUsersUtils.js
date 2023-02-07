@@ -1,4 +1,5 @@
 import { sequelizedWhere } from '@server/database/dbUtils';
+import { formatForOrderByClause } from '@server/utils/constants';
 
 export function getFindOptions(db, findOptions, args, context) {
   const cooridnates = args.points.split(' ');
@@ -27,21 +28,4 @@ export function getFindOptions(db, findOptions, args, context) {
   findOptions.order = formatForOrderByClause(db, args.order);
   findOptions.where = sequelizedWhere(findOptions.where, args.where);
   return findOptions;
-}
-
-export function formatForOrderByClause(db, args) {
-  // Replacing leading and trailing commas if any.
-  args = args.replace(/,\s*$/, '').replace(/^,/, '');
-  // eslint-disable-next-line array-callback-return
-  return args.split(',').map(orderClause => {
-    orderClause = orderClause.trim();
-    if (orderClause) {
-      const queryArgs = orderClause.trim().split(' ');
-      if (queryArgs.length) {
-        const [orderByCol, orderByType] = queryArgs;
-        const query = 'queryColumn'.replace('queryColumn', orderByCol);
-        return [db.sequelize.literal(query), `${orderByType}`];
-      }
-    }
-  });
 }

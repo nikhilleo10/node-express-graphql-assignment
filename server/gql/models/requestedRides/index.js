@@ -8,8 +8,11 @@ import { getQueryFields, TYPE_ATTRIBUTES } from '@server/utils/gqlFieldUtils';
 import { GraphQLDate, GraphQLDateTime } from 'graphql-iso-date';
 import moment from 'moment';
 import _ from 'lodash';
-import { acceptRide, sequelizedWhere } from '@server/database/dbUtils';
+import { acceptRide } from '@server/database/dbUtils';
 import { updateRideOptions } from '@server/utils/constants';
+import { GraphQLCompletedRides } from '../completedRides';
+import { GraphQLIncompleteRides } from '../incompleteRides';
+import { getFindOptionsRequstedRides } from './findOptionsRequestedRides';
 
 const { nodeInterface } = getNode();
 
@@ -31,7 +34,9 @@ const GraphQLRequestedRides = new GraphQLObjectType({
   fields: () => ({
     ...getQueryFields(requestedRidesFields, TYPE_ATTRIBUTES.isNonNull),
     id: { type: new GraphQLNonNull(GraphQLID) },
-    ...timestamps
+    ...timestamps,
+    completed_ride: { type: GraphQLCompletedRides },
+    incomplete_ride: { type: GraphQLIncompleteRides }
   })
 });
 
@@ -41,9 +46,12 @@ const RequestedRidesConnection = createConnection({
   nodeType: GraphQLRequestedRides,
   ...totalConnectionFields,
   before: (findOptions, args, context) => {
-    findOptions.include = findOptions.include || [];
-    findOptions.where = sequelizedWhere(findOptions.where, args.where);
-    return findOptions;
+    const getOptions = getFindOptionsRequstedRides(db, findOptions, args);
+    if (getOptions) {
+      return getOptions;
+    } else {
+      throw new Error('Customer ID is required in where clause.');
+    }
   }
 });
 
@@ -99,9 +107,6 @@ export const requestedRideMutations = {
       case updateRideOptions.ACCEPT_A_RIDE:
         delete args.updateType;
         return await acceptRide(model, args);
-
-      default:
-        break;
     }
   }
 };

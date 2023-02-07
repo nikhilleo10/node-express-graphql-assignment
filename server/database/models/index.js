@@ -13,6 +13,8 @@ db.driverModel = require('@database/models/driver').model(sequelize, Sequelize.D
 db.customerModel = require('@database/models/customer').model(sequelize, Sequelize.DataTypes);
 db.vehicleModel = require('@database/models/vehicle').model(sequelize, Sequelize.DataTypes);
 db.requestedRideModel = require('@database/models/requestedRides').model(sequelize, Sequelize.DataTypes);
+db.completedRideModel = require('@server/database/models/completedRides').model(sequelize, Sequelize.DataTypes);
+db.incompleteRideModel = require('@server/database/models/incompleteRides').model(sequelize, Sequelize.DataTypes);
 
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {

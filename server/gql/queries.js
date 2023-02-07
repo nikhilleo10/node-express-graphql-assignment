@@ -8,7 +8,10 @@ import { getGqlModels } from '@server/utils/autogenHelper';
 import { customListArgs } from '@gql/fields/args';
 
 const { nodeField } = getNode();
-const DB_TABLES_QUERIES = getGqlModels({ type: 'Queries', blacklist: ['aggregate', 'timestamps'] });
+const DB_TABLES_QUERIES = getGqlModels({
+  type: 'Queries',
+  blacklist: ['aggregate', 'timestamps', 'completedRides', 'incompleteRides']
+});
 export const addQueries = () => {
   const query = {
     aggregate: Aggregate
@@ -25,7 +28,10 @@ export const addQueries = () => {
   });
   return query;
 };
-const DB_TABLES_LISTS = getGqlModels({ type: 'Lists', blacklist: ['aggregate', 'timestamps'] });
+const DB_TABLES_LISTS = getGqlModels({
+  type: 'Lists',
+  blacklist: ['aggregate', 'timestamps', 'completedRides', 'incompleteRides']
+});
 export const addLists = () => {
   const list = {
     aggregate: Aggregate

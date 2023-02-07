@@ -57,5 +57,24 @@ export const TYPE_OF_ENGINE_ENUM_VALUES = new GraphQLEnumType({
 });
 
 export const updateRideOptions = {
-  ACCEPT_A_RIDE: 'ACCEPT_A_RIDE'
+  ACCEPT_A_RIDE: 'ACCEPT_A_RIDE',
+  END_A_RIDE: 'END_A_RIDE',
+  CANCEL_A_RIDE: 'CANCEL_A_RIDE'
 };
+
+export function formatForOrderByClause(db, args) {
+  // Replacing leading and trailing commas if any.
+  args = args.replace(/,\s*$/, '').replace(/^,/, '');
+  // eslint-disable-next-line array-callback-return
+  return args.split(',').map(orderClause => {
+    orderClause = orderClause.trim();
+    if (orderClause) {
+      const queryArgs = orderClause.trim().split(' ');
+      if (queryArgs.length) {
+        const [orderByCol, orderByType] = queryArgs;
+        const query = 'queryColumn'.replace('queryColumn', orderByCol);
+        return [db.sequelize.literal(query), `${orderByType}`];
+      }
+    }
+  });
+}
