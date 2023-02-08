@@ -83,8 +83,46 @@ export const requestedRidesTable = range(1, 10).map((item, index) => ({
   estDistance: _.random(4, 20),
   tripStatus: TRIP_STATUS_TYPES.PENDING,
   custId: index + 1,
-  driverId: index + 1
+  driverId: index + 1,
+  completed_ride: {
+    actualFare: 900.05,
+    tip: 10,
+    tripId: 25,
+    id: '7',
+    createdAt: '2023-02-07T08:00:33.000Z',
+    updatedAt: '2023-02-07T08:01:13.000Z',
+    deletedAt: null
+  },
+  incomplete_ride: {
+    reasonForCancellation: 'I got a better ride at low cost',
+    tripId: 7,
+    cancellationTime: '2023-02-07T09:15:48.000Z',
+    id: '1',
+    createdAt: '2023-02-07T09:15:48.000Z',
+    updatedAt: '2023-02-07T09:15:48.000Z',
+    deletedAt: null
+  }
 }));
+
+export const completedRideTable = {
+  actualFare: 900.05,
+  tip: 10,
+  tripId: 25,
+  id: '7',
+  createdAt: '2023-02-07T08:00:33.000Z',
+  updatedAt: '2023-02-07T08:01:13.000Z',
+  deletedAt: null
+};
+
+export const incompleteRideTable = {
+  reasonForCancellation: 'I got a better ride at low cost',
+  tripId: 7,
+  cancellationTime: '2023-02-07T09:15:48.000Z',
+  id: '1',
+  createdAt: '2023-02-07T09:15:48.000Z',
+  updatedAt: '2023-02-07T09:15:48.000Z',
+  deletedAt: null
+};
 
 export const DB_ENV = {
   POSTGRES_HOST: 'host',

@@ -100,6 +100,12 @@ export function model(sequelize, DataTypes) {
     requestedRideModel.belongsTo(models.driverModel, {
       foreignKey: 'driver_id'
     });
+    requestedRideModel.hasOne(models.completedRideModel, {
+      foreignKey: 'trip_id'
+    });
+    requestedRideModel.hasOne(models.incompleteRideModel, {
+      foreignKey: 'trip_id'
+    });
   };
   return requestedRideModel;
 }
