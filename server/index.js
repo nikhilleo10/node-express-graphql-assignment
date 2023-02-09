@@ -8,7 +8,7 @@ import { ApolloServer } from 'apollo-server-express';
 import { createServer } from 'http';
 import axios from 'axios';
 import { newCircuitBreaker } from '@services/circuitbreaker';
-import { corsOptionsDelegate, apolloServerContextResolver } from '@middleware/gqlAuth';
+import { corsOptionsDelegate } from '@middleware/gqlAuth';
 import rTracer from 'cls-rtracer';
 import bodyParser from 'body-parser';
 import { connect } from '@database';
@@ -18,9 +18,7 @@ import { isLocalEnv, isTestEnv, logger } from '@utils/index';
 import cluster from 'cluster';
 import os from 'os';
 import 'source-map-support/register';
-import { initQueues } from '@utils/queue';
 import { sendMessage } from '@services/slack';
-import { SubscriptionRoot } from '@gql/subscriptions';
 import depthLimit from 'graphql-depth-limit';
 import logReqRes from './middleware/logger';
 
@@ -43,8 +41,7 @@ export const init = async () => {
   // create the graphQL schema
   const schema = new GraphQLSchema({
     query: QueryRoot,
-    mutation: MutationRoot,
-    subscription: SubscriptionRoot
+    mutation: MutationRoot
   });
 
   if (!app) {
@@ -81,7 +78,6 @@ export const init = async () => {
       schema,
       introspection: isLocalEnv(),
       validationRules: [depthLimit(6)],
-      context: apolloServerContextResolver,
       formatError: e => {
         logger().info({ e });
         return e.message;
@@ -99,7 +95,6 @@ export const init = async () => {
     httpServer.listen(9000, () => {
       console.log(`Server is now running on http://localhost:9000/graphql`);
     });
-    initQueues();
   }
 };
 

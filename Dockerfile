@@ -13,8 +13,8 @@ ARG ENVIRONMENT_NAME
 ENV ENVIRONMENT_NAME $ENVIRONMENT_NAME
 RUN mkdir -p /dist
 RUN apk add yarn
-RUN yarn global add sequelize@6.6.5 sequelize-cli@6.2.0 pg
-RUN yarn add shelljs bull dotenv
+RUN yarn global add sequelize@6.6.5 sequelize-cli@6.2.0 pg mysql2
+RUN yarn add shelljs bull dotenv lodash moment bcryptjs @faker-js/faker
 ADD scripts/migrate-and-run.sh /
 ADD package.json /
 ADD . /

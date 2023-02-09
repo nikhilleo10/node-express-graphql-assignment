@@ -71,8 +71,8 @@ describe('connect', () => {
     expect(console.log.mock.calls.length).toBe(1);
     expect(console.log.mock.calls[0][0]).toBe('Connection has been established successfully.\n');
     expect(console.log.mock.calls[0][1]).toEqual({
-      db: process.env.POSTGRES_DB,
-      user: process.env.POSTGRES_USER,
+      db: process.env.MYSQL_DB,
+      user: process.env.MYSQL_USER,
       host: process.env.MYSQL_HOST
     });
   });

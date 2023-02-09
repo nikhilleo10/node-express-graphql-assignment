@@ -1,5 +1,5 @@
 import Sequelize from 'sequelize';
-import { getLogger, isTestEnv, logger } from '@server/utils';
+import { getLogger, isProdEnv, isTestEnv, logger } from '@server/utils';
 import dotenv from 'dotenv';
 import mysql2 from 'mysql2';
 
@@ -15,10 +15,21 @@ export const getClient = force => {
       if (!isTestEnv()) {
         Sequelize.useCLS(namespace);
       }
-      dotenv.config({ path: `.env.${process.env.ENVIRONMENT_NAME}` });
-      client = new Sequelize(process.env.DB_URI, {
-        host: process.env.MYSQL_HOST,
-        port: process.env.MYSQL_PORT,
+      let databaseUrl;
+      let hostName;
+      let databasePort;
+      if (isProdEnv()) {
+        const { username, host, dbname, password, port } = JSON.parse(process.env.GRAPHQLSERVERCLUSTER_SECRET);
+        hostName = host;
+        databasePort = port;
+        databaseUrl = `mysql://${username}:${password}@${host}:${port}/${dbname}`;
+      } else {
+        dotenv.config({ path: `.env.${process.env.ENVIRONMENT_NAME}` });
+        databaseUrl = process.env.DB_URI;
+      }
+      client = new Sequelize(databaseUrl, {
+        hostName,
+        databasePort,
         logging: isTestEnv() ? false : getLogger(),
         dialect: 'mysql',
         dialectModule: mysql2,

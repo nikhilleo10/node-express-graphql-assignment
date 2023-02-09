@@ -6,6 +6,7 @@ import rTracer from 'cls-rtracer';
 const { combine, timestamp, printf } = format;
 export const isTestEnv = () => process.env.ENVIRONMENT_NAME === 'test' || process.env.NODE_ENV === 'test';
 export const isLocalEnv = () => process.env.ENVIRONMENT_NAME === 'local';
+export const isProdEnv = () => process.env.ENVIRONMENT_NAME === 'production';
 
 export const addWhereClause = (where, clause) => {
   if (isEmpty(where)) {
