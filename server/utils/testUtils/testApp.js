@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { QueryRoot } from '@gql/queries';
 import { MutationRoot } from '@gql/mutations';
 import { client } from '@database';
-import { SubscriptionRoot } from '@gql/subscriptions';
+
 import { ApolloServer } from 'apollo-server-express';
 import { logger } from '..';
 
@@ -18,7 +18,7 @@ connect();
 dotenv.config({ path: `.env.${process.env.ENVIRONMENT_NAME}` });
 
 // create the graphQL schema
-const schema = new GraphQLSchema({ query: QueryRoot, mutation: MutationRoot, subscription: SubscriptionRoot });
+const schema = new GraphQLSchema({ query: QueryRoot, mutation: MutationRoot });
 
 const getTestApp = async () => {
   const testApp = express();

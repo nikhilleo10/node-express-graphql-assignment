@@ -81,7 +81,7 @@
     "net": "^1.0.2",
     "opossum": "^6.3.0",
     "path": "^0.12.7",
-    "pg": "^8.9.0",
+    "pg-hstore": "^2.3.4",
     "pluralize": "^8.0.0",
     "sequelize": "^6.6.5",
     "slack-notify": "^2.0.2",

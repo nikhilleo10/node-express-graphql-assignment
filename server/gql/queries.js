@@ -2,7 +2,6 @@ import { GraphQLObjectType, GraphQLNonNull, GraphQLInt } from 'graphql';
 import camelCase from 'lodash/camelCase';
 import pluralize from 'pluralize';
 import { defaultListArgs, defaultArgs } from 'graphql-sequelize';
-import { Aggregate } from '@gql/models/aggregate';
 import { getNode } from '@gql/node';
 import { getGqlModels } from '@server/utils/autogenHelper';
 import { customListArgs } from '@gql/fields/args';
@@ -13,9 +12,7 @@ const DB_TABLES_QUERIES = getGqlModels({
   blacklist: ['aggregate', 'timestamps', 'completedRides', 'incompleteRides']
 });
 export const addQueries = () => {
-  const query = {
-    aggregate: Aggregate
-  };
+  const query = {};
   Object.keys(DB_TABLES_QUERIES).forEach(table => {
     query[camelCase(table)] = {
       ...DB_TABLES_QUERIES[table].query,
@@ -33,9 +30,7 @@ const DB_TABLES_LISTS = getGqlModels({
   blacklist: ['aggregate', 'timestamps', 'completedRides', 'incompleteRides']
 });
 export const addLists = () => {
-  const list = {
-    aggregate: Aggregate
-  };
+  const list = {};
   Object.keys(DB_TABLES_LISTS).forEach(table => {
     list[pluralize(camelCase(table))] = {
       ...DB_TABLES_LISTS[table].list,
@@ -54,7 +49,6 @@ export const QueryRoot = new GraphQLObjectType({
   node: nodeField,
   fields: () => ({
     ...addQueries(),
-    ...addLists(),
-    aggregate: Aggregate
+    ...addLists()
   })
 });
